@@ -31,28 +31,11 @@ int main()
 	scarfy_data.rec.height = scarfy.height;
 	scarfy_data.rec.x = 0;
 	scarfy_data.rec.y = 0;
-	scarfy_data.pos.x = screen_width / 2 - scarfy_data.rec.width / 2;
+	scarfy_data.pos.x = screen_width / 8 - scarfy_data.rec.width / 2;
 	scarfy_data.pos.y = screen_height / 2 - scarfy_data.rec.height;
 	scarfy_data.frame = 0;
 	scarfy_data.update_time = 1.0f / 12.0f;
 	scarfy_data.running_time = 0.0;
-
-	// Rectangle scarfy_rec;
-	// scarfy_rec.width = scarfy.width / 6; // 6 images in spritesheet
-	// scarfy_rec.height = scarfy.height;
-	// scarfy_rec.x = 0;
-	// scarfy_rec.y = 0;
-
-	// //player animation
-	// int frame{};
-	// float anim_speed{1.3f};
-	// const float update_time{anim_speed / 12.0f};
-	// float running_time{};
-
-	// //player position
-	// Vector2 scarfy_pos;
-	// scarfy_pos.x = screen_width / 8 - scarfy_rec.width / 2; //center
-	// scarfy_pos.y = screen_height - scarfy_rec.height;
 
 	//for double jump prevention
 	bool isinAir{false};
@@ -76,25 +59,8 @@ int main()
 		0.0f														// float Running time
 	};
 
-	// Rectangle nebula_rec{0.0f, 0.0f, nebula.width / 8.f, nebula.height / 8.f};
-	// Vector2 nebula_pos{screen_width, screen_height - nebula_rec.height};
-
-	// Rectangle neb_2_Rec{0.0f, 0.0f, nebula.width / 8.f, nebula.height / 8.f};
-	// Vector2 neb_2_pos{screen_width + 300, screen_height - nebula_rec.height};
-
 	//nebula x velocity (Pixels per second)
 	int nebVel{-600};
-
-	//nebula animation variables
-	int neb_frame{};
-	const float neb_update_time{1.0f / 12.0f};
-	float neb_running_time{};
-
-	int neb_2_frame{};
-	const float neb_2_update_time{1.0f / 16.0f};
-	float neb_2_running_time{};
-
-	//-------------------------------------------------------------------------------------
 
 	SetTargetFPS(60);
 	while (!WindowShouldClose())
