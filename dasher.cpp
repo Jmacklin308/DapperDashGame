@@ -50,11 +50,12 @@ int main()
 	//(NEBULAS)nebula x velocity (Pixels per second)
 	int nebVel{-600};
 
+	//Numbe of nebulae
+	const int num_of_nebulae{10};
 	//initialize nebula array
-	AnimData nebulae[3]{};
+	AnimData nebulae[num_of_nebulae]{};
 
-	// Assign data to each nebula uppon creation
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < num_of_nebulae; i++)
 	{
 
 		//create the rectangle for each nebula
@@ -74,12 +75,10 @@ int main()
 
 		//create the running time for each nebula
 		nebulae[i].running_time = 0.0f;
-	}
 
-	//manually set nebula data
-	nebulae[0].pos.x = windowDemensions[0];
-	nebulae[1].pos.x = windowDemensions[0] + 300;
-	nebulae[2].pos.x = windowDemensions[0] + 500;
+		//initialize
+		nebulae[i].pos.x = windowDemensions[0] + i * 300;
+	}
 
 	//(CORE) Game loop----------------------------------------------------------------------------------------------
 	SetTargetFPS(60);
@@ -137,7 +136,7 @@ int main()
 		//-----------------------------------------------------------------------------------------------------------
 		//-------------------------(Nebulae) Nebula position and animtaion handleing --------------------------------
 		//-----------------------------------------------------------------------------------------------------------
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < num_of_nebulae; i++)
 		{
 			//update nebula positon
 			nebulae[i].pos.x += nebVel * dt;
@@ -194,6 +193,7 @@ int main()
 		//-----------------------------------------------------------------------------------------------------------
 
 		EndDrawing();
+		//-----------------------------------------------------------------------------------------------------------
 	}
 	CloseWindow();
 	//unload our player texture
