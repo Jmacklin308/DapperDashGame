@@ -49,24 +49,36 @@ int main()
 	Texture2D nebula = LoadTexture("Textures/12_nebula_spritesheet.png");
 	//(NEBULAS)nebula x velocity (Pixels per second)
 	int nebVel{-600};
-	//(NEBULAS) data for our nebulas
-	AnimData neb_data{
-		{0.0f, 0.0f, nebula.width / 8.0f, nebula.height / 8.0f},		   // Rectangle rec
-		{windowDemensions[0], windowDemensions[1] - nebula.height / 8.0f}, //  Vector2 pos
-		0,																   // int frame
-		1.0f / 12.0f,													   // float Update Time
-		0.0f															   // float Running time
-	};
-	AnimData neb_2_data{
-		{0.0f, 0.0f, nebula.width / 8.0f, nebula.height / 8.0f},				 // Rectangle rec
-		{windowDemensions[0] + 300, windowDemensions[1] - nebula.height / 8.0f}, //  Vector2 pos
-		0,																		 // int frame
-		1.0f / 16.0f,															 // float Update Time
-		0.0f																	 // float Running time
-	};
 
 	//initialize nebula array
-	AnimData nebulae[2]{neb_data, neb_2_data};
+	AnimData nebulae[2]{};
+
+	// Assign data to each nebula uppon creation
+	for (int i = 0; i < 2; i++)
+	{
+
+		//create the rectangle for each nebula
+		nebulae[i].rec.x = 0.0f;
+		nebulae[i].rec.y = 0.0f;
+		nebulae[i].rec.width = nebula.width / 8.0f;
+		nebulae[i].rec.height = nebula.width / 8.0f;
+
+		//create the vector for each nebula
+		nebulae[i].pos.y = windowDemensions[1] - nebula.height / 8.0f;
+
+		//create the frame for each nebula
+		nebulae[i].frame = 0;
+
+		//create the update time for each nebula
+		nebulae[i].update_time = 1.0f / 16.f;
+
+		//create the running time for each nebula
+		nebulae[i].running_time = 0.0f;
+	}
+
+	//manually set nebula data
+	nebulae[0].pos.x = windowDemensions[0];
+	nebulae[1].pos.x = nebulae[0].pos.x + 300;
 
 	//(CORE) Game loop----------------------------------------------------------------------------------------------
 	SetTargetFPS(60);
