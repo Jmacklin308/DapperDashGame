@@ -14,19 +14,17 @@ int main()
 {
 
 	//window demensions
-	int windowDemensions[2];
+	float windowDemensions[2]{};
 	windowDemensions[0] = 1280; //screen width
 	windowDemensions[1] = 720;	//screen height
 
 	//game window
-	const int screen_width{1280};
-	const int screen_height{720};
-	InitWindow(windowDemensions[0], screen_height, "Dapper Dasher");
+	InitWindow(windowDemensions[0], windowDemensions[1], "Dapper Dasher");
 
-	//for double jump prevention
+	//(SCARFY) for double jump prevention
 	bool isinAir{false};
 
-	//acceleration due to graveity (pixels per second /per second)
+	//gravity (pixels per second /per second)
 	const int rec_gravity{1500};
 
 	//(SCARFY) Texture for player spritesheet
@@ -41,8 +39,8 @@ int main()
 	scarfy_data.rec.height = scarfy.height;
 	scarfy_data.rec.x = 0;
 	scarfy_data.rec.y = 0;
-	scarfy_data.pos.x = screen_width / 8 - scarfy_data.rec.width / 2;
-	scarfy_data.pos.y = screen_height / 2 - scarfy_data.rec.height;
+	scarfy_data.pos.x = windowDemensions[0] / 8 - scarfy_data.rec.width / 2;
+	scarfy_data.pos.y = windowDemensions[1] / 2 - scarfy_data.rec.height;
 	scarfy_data.frame = 0;
 	scarfy_data.update_time = 1.0f / 12.0f;
 	scarfy_data.running_time = 0.0;
@@ -53,19 +51,23 @@ int main()
 	int nebVel{-600};
 	//(NEBULAS) data for our nebulas
 	AnimData neb_data{
-		{0.0f, 0.0f, nebula.width / 8.0f, nebula.height / 8.0f}, // Rectangle rec
-		{screen_width, screen_height - nebula.height / 8.0f},	 //  Vector2 pos
-		0,														 // int frame
-		1.0f / 12.0f,											 // float Update Time
-		0.0f													 // float Running time
+		{0.0f, 0.0f, nebula.width / 8.0f, nebula.height / 8.0f},		   // Rectangle rec
+		{windowDemensions[0], windowDemensions[1] - nebula.height / 8.0f}, //  Vector2 pos
+		0,																   // int frame
+		1.0f / 12.0f,													   // float Update Time
+		0.0f															   // float Running time
 	};
 	AnimData neb_2_data{
-		{0.0f, 0.0f, nebula.width / 8.0f, nebula.height / 8.0f},	// Rectangle rec
-		{screen_width + 300, screen_height - nebula.height / 8.0f}, //  Vector2 pos
-		0,															// int frame
-		1.0f / 16.0f,												// float Update Time
-		0.0f														// float Running time
+		{0.0f, 0.0f, nebula.width / 8.0f, nebula.height / 8.0f},				 // Rectangle rec
+		{windowDemensions[0] + 300, windowDemensions[1] - nebula.height / 8.0f}, //  Vector2 pos
+		0,																		 // int frame
+		1.0f / 16.0f,															 // float Update Time
+		0.0f																	 // float Running time
 	};
+
+	//initialize nebula array
+	AnimData nebulae[2]{neb_data, neb_2_data};
+
 	//(CORE) Game loop----------------------------------------------------------------------------------------------
 	SetTargetFPS(60);
 	while (!WindowShouldClose())
@@ -80,12 +82,12 @@ int main()
 		ClearBackground(RAYWHITE);
 
 		//(SCARFY) Ground check & apply gravity----------------------------------------------------------------
-		if (scarfy_data.pos.y >= screen_height - scarfy_data.rec.height)
+		if (scarfy_data.pos.y >= windowDemensions[1] - scarfy_data.rec.height)
 		{
-			if (scarfy_data.pos.y > screen_height - scarfy_data.rec.height)
+			if (scarfy_data.pos.y > windowDemensions[1] - scarfy_data.rec.height)
 			{
 				//push the player up the amount they passed the bottom of the screen
-				scarfy_data.pos.y -= scarfy_data.pos.y - (screen_height - scarfy_data.rec.height);
+				scarfy_data.pos.y -= scarfy_data.pos.y - (windowDemensions[1] - scarfy_data.rec.height);
 			}
 
 			//reset velocity while on the ground
@@ -112,41 +114,41 @@ int main()
 		}
 
 		//update nebula position
-		neb_data.pos.x += nebVel * dt;
-		if (neb_data.pos.x <= 0 - neb_data.rec.width)
+		nebulae[0].pos.x += nebVel * dt;
+		if (nebulae[0].pos.x <= 0 - nebulae[0].rec.width)
 		{
-			neb_data.pos.x = screen_width + neb_data.rec.width;
+			nebulae[0].pos.x = windowDemensions[0] + nebulae[0].rec.width;
 		}
 
 		//update second nebula position
-		neb_2_data.pos.x += nebVel * dt;
-		if (neb_2_data.pos.x <= 0 - neb_2_data.rec.width)
+		nebulae[1].pos.x += nebVel * dt;
+		if (nebulae[1].pos.x <= 0 - nebulae[1].rec.width)
 		{
-			neb_2_data.pos.x = screen_width + neb_2_data.rec.width;
+			nebulae[1].pos.x = windowDemensions[0] + nebulae[1].rec.width;
 		}
 
 		//animate nebula
-		neb_data.running_time += dt;
-		if (neb_data.running_time >= neb_data.update_time)
+		nebulae[0].running_time += dt;
+		if (nebulae[0].running_time >= nebulae[0].update_time)
 		{
-			neb_data.running_time = 0.0f;
-			neb_data.rec.x = neb_data.frame * neb_data.rec.width;
-			neb_data.frame++;
-			if (neb_data.frame > 8)
+			nebulae[0].running_time = 0.0f;
+			nebulae[0].rec.x = nebulae[0].frame * nebulae[0].rec.width;
+			nebulae[0].frame++;
+			if (nebulae[0].frame > 8)
 			{
-				neb_data.frame = 0;
+				nebulae[0].frame = 0;
 			}
 		}
 		//animate second nebula
-		neb_2_data.running_time += dt;
-		if (neb_2_data.running_time >= neb_2_data.update_time)
+		nebulae[1].running_time += dt;
+		if (nebulae[1].running_time >= nebulae[1].update_time)
 		{
-			neb_2_data.running_time = 0.0f;
-			neb_2_data.rec.x = neb_2_data.frame * neb_2_data.rec.width;
-			neb_2_data.frame++;
-			if (neb_2_data.frame > 8)
+			nebulae[1].running_time = 0.0f;
+			nebulae[1].rec.x = nebulae[1].frame * nebulae[1].rec.width;
+			nebulae[1].frame++;
+			if (nebulae[1].frame > 8)
 			{
-				neb_2_data.frame = 0;
+				nebulae[1].frame = 0;
 			}
 		}
 
@@ -173,10 +175,10 @@ int main()
 		}
 
 		//draw nebula
-		DrawTextureRec(nebula, neb_data.rec, neb_data.pos, WHITE);
+		DrawTextureRec(nebula, nebulae[0].rec, nebulae[0].pos, WHITE);
 
 		//draw second nebula
-		DrawTextureRec(nebula, neb_2_data.rec, neb_2_data.pos, RED);
+		DrawTextureRec(nebula, nebulae[1].rec, nebulae[1].pos, RED);
 
 		//draw player
 		DrawTextureRec(scarfy, scarfy_data.rec, scarfy_data.pos, WHITE);
