@@ -51,10 +51,10 @@ int main()
 	int nebVel{-600};
 
 	//initialize nebula array
-	AnimData nebulae[2]{};
+	AnimData nebulae[3]{};
 
 	// Assign data to each nebula uppon creation
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 3; i++)
 	{
 
 		//create the rectangle for each nebula
@@ -78,7 +78,8 @@ int main()
 
 	//manually set nebula data
 	nebulae[0].pos.x = windowDemensions[0];
-	nebulae[1].pos.x = nebulae[0].pos.x + 300;
+	nebulae[1].pos.x = windowDemensions[0] + 300;
+	nebulae[2].pos.x = windowDemensions[0] + 500;
 
 	//(CORE) Game loop----------------------------------------------------------------------------------------------
 	SetTargetFPS(60);
@@ -120,57 +121,52 @@ int main()
 			}
 		}
 		//---------------------------------------------------------------------------------------------------------
+		//(Scarfy) input checking
+		//---------------------------------------------------------------------------------------------------------
 		if (IsKeyPressed(KEY_SPACE) && isinAir == false)
 		{
 			rec_current_velocity += rec_jump_velocity;
 		}
+		//---------------------------------------------------------------------------------------------------------
 
-		//update nebula position
-		nebulae[0].pos.x += nebVel * dt;
-		if (nebulae[0].pos.x <= 0 - nebulae[0].rec.width)
+		//-----------------------------------------------------------------------------------------------------------
+		//Nebula position and animtaion handleing
+		//-----------------------------------------------------------------------------------------------------------
+		for (int i = 0; i < 3; i++)
 		{
-			nebulae[0].pos.x = windowDemensions[0] + nebulae[0].rec.width;
-		}
-
-		//update second nebula position
-		nebulae[1].pos.x += nebVel * dt;
-		if (nebulae[1].pos.x <= 0 - nebulae[1].rec.width)
-		{
-			nebulae[1].pos.x = windowDemensions[0] + nebulae[1].rec.width;
-		}
-
-		//animate nebula
-		nebulae[0].running_time += dt;
-		if (nebulae[0].running_time >= nebulae[0].update_time)
-		{
-			nebulae[0].running_time = 0.0f;
-			nebulae[0].rec.x = nebulae[0].frame * nebulae[0].rec.width;
-			nebulae[0].frame++;
-			if (nebulae[0].frame > 8)
+			//update nebula positon
+			nebulae[i].pos.x += nebVel * dt;
+			//reset if nebula goes out of bounds
+			if (nebulae[i].pos.x <= 0 - nebulae[i].rec.width)
 			{
-				nebulae[0].frame = 0;
+				nebulae[i].pos.x = windowDemensions[0] + nebulae[i].rec.width;
 			}
-		}
-		//animate second nebula
-		nebulae[1].running_time += dt;
-		if (nebulae[1].running_time >= nebulae[1].update_time)
-		{
-			nebulae[1].running_time = 0.0f;
-			nebulae[1].rec.x = nebulae[1].frame * nebulae[1].rec.width;
-			nebulae[1].frame++;
-			if (nebulae[1].frame > 8)
-			{
-				nebulae[1].frame = 0;
-			}
-		}
 
-		//update player position
+			//Animate each nebula nebula
+			nebulae[i].running_time += dt;
+			if (nebulae[i].running_time >= nebulae[i].update_time)
+			{
+				nebulae[i].running_time = 0.0f;
+				nebulae[i].rec.x = nebulae[i].frame * nebulae[i].rec.width;
+				nebulae[i].frame++;
+				if (nebulae[i].frame > 8)
+				{
+					nebulae[i].frame = 0;
+				}
+			}
+
+			//draw nebula
+			DrawTextureRec(nebula, nebulae[i].rec, nebulae[i].pos, WHITE);
+		}
+		//-----------------------------------------------------------------------------------------------------------
+		//(scarfy) Update, Animate, and draw
+		//-----------------------------------------------------------------------------------------------------------
 		scarfy_data.pos.y += rec_current_velocity * dt;
 
 		//Update player animation
 		scarfy_data.rec.x = scarfy_data.frame * scarfy_data.rec.width;
 
-		//animate the player
+		//animate if not in air, freeze on first frame otherwise
 		if (scarfy_data.running_time >= scarfy_data.update_time && !isinAir)
 		{
 			scarfy_data.running_time = 0.0f;
@@ -186,14 +182,9 @@ int main()
 			scarfy_data.frame = 0;
 		}
 
-		//draw nebula
-		DrawTextureRec(nebula, nebulae[0].rec, nebulae[0].pos, WHITE);
-
-		//draw second nebula
-		DrawTextureRec(nebula, nebulae[1].rec, nebulae[1].pos, RED);
-
-		//draw player
+		//draw scarfy
 		DrawTextureRec(scarfy, scarfy_data.rec, scarfy_data.pos, WHITE);
+		//-----------------------------------------------------------------------------------------------------------
 
 		EndDrawing();
 	}
