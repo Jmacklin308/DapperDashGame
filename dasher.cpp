@@ -3,11 +3,11 @@
 
 struct AnimData
 {
-	Rectangle rec;
-	Vector2 pos;
-	int frame;
-	float update_time;
-	float running_time;
+    Rectangle rec;
+    Vector2 pos;
+    int frame;
+    float update_time;
+    float running_time;
 };
 
 AnimData updateAnimData(AnimData data, float dt, int maxFrame)
