@@ -105,6 +105,9 @@ int main()
 		nebulae[i].pos.x = windowDemensions[0] + i * 300;
 	}
 
+	//Finish line
+	float finishLine{nebulae[num_of_nebulae - 1].pos.x};
+
 	//(Background) background textures
 	Texture2D far_background = LoadTexture("textures/far-buildings.png");
 	Texture2D midground = LoadTexture("textures/back-buildings.png");
@@ -112,6 +115,9 @@ int main()
 	float bg_x{};
 	float m_bg_x{};
 	float f_bg_x{};
+
+	//collision detection
+	bool collsion{false};
 
 	//(CORE) Game loop----------------------------------------------------------------------------------------------
 	SetTargetFPS(60);
@@ -165,9 +171,7 @@ int main()
 		Vector2 f_bg_2pos{f_bg_x + foreground.width * 2.0f, 0.0f};
 		DrawTextureEx(foreground, f_bg_2pos, 0.0f, 2.0f, WHITE);
 
-		//-----------------------------------------------------------------------------------------------------------
-		//----------------------------------(scarfy) Update, Gravity, Animate, and draw------------------------------
-		//-----------------------------------------------------------------------------------------------------------
+		//----------------------------------(scarfy) Gravity and check ground/ceiling------------------------------
 		if (isOnGround(scarfy_data, windowDemensions[1]))
 		{
 			if (scarfy_data.pos.y > windowDemensions[1] - scarfy_data.rec.height)
@@ -194,48 +198,81 @@ int main()
 			}
 		}
 
-		//----------------------------------------------------------------------------------------------------------
 		//------------------------------------(Scarfy) input checking-----------------------------------------------
-		//----------------------------------------------------------------------------------------------------------
 		if (IsKeyPressed(KEY_SPACE) && isinAir == false)
 		{
 			rec_current_velocity += rec_jump_velocity;
 		}
 
-		//----------------------------------------------------------------------------------------------------------
-		//------------------------------------(Scarfy) update position and draw-------------------------------------
-		//----------------------------------------------------------------------------------------------------------
-		//Apply Gravity
-		scarfy_data.pos.y += rec_current_velocity * dt;
-        
-		//Animate Scarfy with said data
-		if (!isinAir)
-		{
-			//update the animation
-			scarfy_data = updateAnimData(scarfy_data, dt, 5);
-		}
-        
-		//draw scarfy
-		DrawTextureRec(scarfy, scarfy_data.rec, scarfy_data.pos, WHITE);
+		//------------------------------------Check collision-------------------------------------
 
-		//-----------------------------------------------------------------------------------------------------------
-		//-------------------------(Nebulae) Nebula position and animtaion handleing --------------------------------
-		//-----------------------------------------------------------------------------------------------------------
-		for (int i = 0; i < num_of_nebulae; i++)
+		for (AnimData nebula : nebulae)
 		{
-			//update nebula positon
-			nebulae[i].pos.x += nebVel * dt;
-			//reset if nebula goes out of bounds
-			if (nebulae[i].pos.x <= 0 - nebulae[i].rec.width)
+			float pad{20};
+			//setup nebula collision
+			Rectangle nebRec{
+				nebula.pos.x + pad,
+				nebula.pos.y + 20,
+				nebula.rec.width - 2 * pad,
+				nebula.rec.height - 2 * pad};
+
+			Rectangle scarfyRec{
+				scarfy_data.pos.x,
+				scarfy_data.pos.y,
+				scarfy_data.rec.width,
+				scarfy_data.rec.height};
+
+			if (CheckCollisionRecs(nebRec, scarfyRec))
 			{
-				nebulae[i].pos.x = windowDemensions[0] + nebulae[i].rec.width;
+				collsion = true;
+			}
+		}
+
+		//Stop drawing nebula and scarfy if colliding
+		if (collsion)
+		{
+			//loose the game
+		}
+		else
+		{
+
+			//------------------------------------(Scarfy) update position and draw-------------------------------------
+			//Apply Gravity
+			scarfy_data.pos.y += rec_current_velocity * dt;
+
+			//Animate Scarfy with said data
+			if (!isinAir)
+			{
+				//update the animation
+				scarfy_data = updateAnimData(scarfy_data, dt, 5);
 			}
 
-			//update the animation frame
-			nebulae[i] = updateAnimData(nebulae[i], dt, 7);
-            
-			//draw nebula
-			DrawTextureRec(nebula, nebulae[i].rec, nebulae[i].pos, WHITE);
+			//draw scarfy
+			DrawTextureRec(scarfy, scarfy_data.rec, scarfy_data.pos, WHITE);
+
+			//-----------------------------------------------------------------------------------------------------------
+			//-------------------------(Nebulae) Nebula position and animtaion handleing --------------------------------
+			//-----------------------------------------------------------------------------------------------------------
+
+			//Update "finish line" (last nebulae)
+			finishLine += nebVel * dt;
+
+			for (int i = 0; i < num_of_nebulae; i++)
+			{
+				//update nebula positon
+				nebulae[i].pos.x += nebVel * dt;
+				//reset if nebula goes out of bounds
+				if (nebulae[i].pos.x <= 0 - nebulae[i].rec.width)
+				{
+					nebulae[i].pos.x = windowDemensions[0] + nebulae[i].rec.width;
+				}
+
+				//update the animation frame
+				nebulae[i] = updateAnimData(nebulae[i], dt, 7);
+
+				//draw nebula
+				DrawTextureRec(nebula, nebulae[i].rec, nebulae[i].pos, WHITE);
+			}
 		}
 
 		EndDrawing();
