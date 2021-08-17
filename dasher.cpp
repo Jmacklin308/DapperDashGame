@@ -45,12 +45,13 @@ int main()
     
 	//(SCARFY) for double jump prevention
 	bool isinAir{};
-    
-	//gravity (pixels per second /per second)
+
+	//(SCARFY)gravity (pixels per second /per second)
 	const int rec_gravity{1500};
     
 	//(SCARFY) Texture for player spritesheet
 	Texture2D scarfy = LoadTexture("textures/scarfy.png");
+
 	//(SCARFY) velocity for movment
 	int rec_jump_velocity{-900}; //pixles per second
 	int rec_current_velocity{0};
@@ -69,11 +70,13 @@ int main()
     
 	//(NEBULAS) Texture for nebulas
 	Texture2D nebula = LoadTexture("Textures/12_nebula_spritesheet.png");
+
 	//(NEBULAS)nebula x velocity (Pixels per second)
 	int nebVel{-600};
     
 	//Numbe of nebulae
 	const int num_of_nebulae{4};
+
 	//initialize nebula array
 	AnimData nebulae[num_of_nebulae]{};
     
@@ -116,19 +119,18 @@ int main()
 		//Drawing-------------------------------------------------------------------------------------------
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
-		//-----------------------------------------------------------------------------------------------------
-        
+
 		//-----------------------------------------------------------------------------------------------------------
 		//----------------------------------(scarfy) Update, Gravity, Animate, and draw------------------------------
 		//-----------------------------------------------------------------------------------------------------------
 		if (isOnGround(scarfy_data, windowDemensions[1]))
 		{
-			// if (scarfy_data.pos.y > windowDemensions[1] - scarfy_data.rec.height)
-			// {
-			// 	//push the player up the amount they passed the bottom of the screen
-			// 	scarfy_data.pos.y -= scarfy_data.pos.y - (windowDemensions[1] - scarfy_data.rec.height);
-			// }
-            
+			if (scarfy_data.pos.y > windowDemensions[1] - scarfy_data.rec.height)
+			{
+				//push the player up the amount they passed the bottom of the screen
+				scarfy_data.pos.y -= scarfy_data.pos.y - (windowDemensions[1] - scarfy_data.rec.height);
+			}
+
 			//reset velocity while on the ground
 			rec_current_velocity = 0;
 			isinAir = false;
@@ -138,16 +140,15 @@ int main()
 			//apply gravity whilst in air
 			rec_current_velocity += rec_gravity * dt;
 			isinAir = true;
-            
-			// //player will hit ceiling
-			// if (scarfy_data.pos.y <= 0)
-			// {
-			// 	float amountOver{scarfy_data.pos.y};
-			// 	scarfy_data.pos.y -= amountOver;
-			// }
+
+			//player will hit ceiling
+			if (scarfy_data.pos.y <= 0)
+			{
+				float amountOver{scarfy_data.pos.y};
+				scarfy_data.pos.y -= amountOver;
+			}
 		}
-		//-----------------------------------------------------------------------------------------------------------
-        
+
 		//----------------------------------------------------------------------------------------------------------
 		//------------------------------------(Scarfy) input checking-----------------------------------------------
 		//----------------------------------------------------------------------------------------------------------
@@ -155,10 +156,9 @@ int main()
 		{
 			rec_current_velocity += rec_jump_velocity;
 		}
-		//-----------------------------------------------------------------------------------------------------------
-        
+
 		//----------------------------------------------------------------------------------------------------------
-		//------------------------------------(Scarfy) update position and draw-----------------------------------------------
+		//------------------------------------(Scarfy) update position and draw-------------------------------------
 		//----------------------------------------------------------------------------------------------------------
 		//Apply Gravity
 		scarfy_data.pos.y += rec_current_velocity * dt;
@@ -172,8 +172,7 @@ int main()
         
 		//draw scarfy
 		DrawTextureRec(scarfy, scarfy_data.rec, scarfy_data.pos, WHITE);
-		//-----------------------------------------------------------------------------------------------------------
-        
+
 		//-----------------------------------------------------------------------------------------------------------
 		//-------------------------(Nebulae) Nebula position and animtaion handleing --------------------------------
 		//-----------------------------------------------------------------------------------------------------------
@@ -193,14 +192,11 @@ int main()
 			//draw nebula
 			DrawTextureRec(nebula, nebulae[i].rec, nebulae[i].pos, WHITE);
 		}
-        
-		//-----------------------------------------------------------------------------------------------------------
-        
+
 		EndDrawing();
-		//-----------------------------------------------------------------------------------------------------------
 	}
 	CloseWindow();
-	//unload our player texture
+	//unload our textures
 	UnloadTexture(scarfy);
 	UnloadTexture(nebula);
 	return 0;
