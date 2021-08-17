@@ -37,9 +37,9 @@ int main()
     
 	//window demensions
 	float windowDemensions[2]{};
-	windowDemensions[0] = 1280; //screen width
-	windowDemensions[1] = 720;	//screen height
-    
+	windowDemensions[0] = 512; //screen width
+	windowDemensions[1] = 384; //screen height
+
 	//game window
 	InitWindow(windowDemensions[0], windowDemensions[1], "Dapper Dasher");
     
@@ -104,8 +104,15 @@ int main()
 		//initialize
 		nebulae[i].pos.x = windowDemensions[0] + i * 300;
 	}
-    
-    
+
+	//(Background) background textures
+	Texture2D far_background = LoadTexture("textures/far-buildings.png");
+	Texture2D midground = LoadTexture("textures/back-buildings.png");
+	Texture2D foreground = LoadTexture("textures/foreground.png");
+	float bg_x{};
+	float m_bg_x{};
+	float f_bg_x{};
+
 	//(CORE) Game loop----------------------------------------------------------------------------------------------
 	SetTargetFPS(60);
 	while (!WindowShouldClose())
@@ -119,6 +126,44 @@ int main()
 		//Drawing-------------------------------------------------------------------------------------------
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
+
+		//move background
+		bg_x -= 230 * dt;
+		if (bg_x <= -far_background.width * 2)
+		{
+			//reset background
+			bg_x = 0.0f;
+		}
+		m_bg_x -= 358 * dt;
+		if (m_bg_x <= -midground.width * 2)
+		{
+			//reset midground
+			m_bg_x = 0.0f;
+		}
+		f_bg_x -= 440 * dt;
+		if (f_bg_x <= -foreground.width * 2)
+		{
+			//reset foreground
+			f_bg_x = 0.0f;
+		}
+
+		//draw far background
+		Vector2 bg_1pos{bg_x, 0.0f};
+		DrawTextureEx(far_background, bg_1pos, 0.0f, 2.0f, WHITE);
+		Vector2 bg_2pos{bg_x + far_background.width * 2.0f, 0.0f};
+		DrawTextureEx(far_background, bg_2pos, 0.0f, 2.0f, WHITE);
+
+		//draw midground
+		Vector2 m_bg_1pos{m_bg_x, 0.0f};
+		DrawTextureEx(midground, m_bg_1pos, 0.0f, 2.0f, WHITE);
+		Vector2 m_bg_2pos{m_bg_x + midground.width * 2.0f, 0.0f};
+		DrawTextureEx(midground, m_bg_2pos, 0.0f, 2.0f, WHITE);
+
+		//draw foreground
+		Vector2 f_bg_1pos{f_bg_x, 0.0f};
+		DrawTextureEx(foreground, f_bg_1pos, 0.0f, 2.0f, WHITE);
+		Vector2 f_bg_2pos{f_bg_x + foreground.width * 2.0f, 0.0f};
+		DrawTextureEx(foreground, f_bg_2pos, 0.0f, 2.0f, WHITE);
 
 		//-----------------------------------------------------------------------------------------------------------
 		//----------------------------------(scarfy) Update, Gravity, Animate, and draw------------------------------
@@ -185,8 +230,8 @@ int main()
 			{
 				nebulae[i].pos.x = windowDemensions[0] + nebulae[i].rec.width;
 			}
-            
-			//update the animation
+
+			//update the animation frame
 			nebulae[i] = updateAnimData(nebulae[i], dt, 7);
             
 			//draw nebula
@@ -199,5 +244,8 @@ int main()
 	//unload our textures
 	UnloadTexture(scarfy);
 	UnloadTexture(nebula);
+	UnloadTexture(far_background);
+	UnloadTexture(midground);
+	UnloadTexture(foreground);
 	return 0;
 }
